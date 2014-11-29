@@ -47,21 +47,36 @@ public class SelfieViewAdapter extends BaseAdapter {
 			newView = inflater.inflate(R.layout.selfie_list_item, null);
 			holder.icon = (ImageView) newView.findViewById(R.id.icon);
 			holder.date = (TextView) newView.findViewById(R.id.date);
+			holder.filename = (TextView) newView.findViewById(R.id.filename);
 			newView.setTag(holder);
 		} else {
 			holder = (ViewHolder) newView.getTag();
 		}
 		
 		//holder.icon.setImageBitmap();
-		holder.date.setText(list.get(position));
+		String filename = list.get(position);
+		holder.date.setText("Date: " + formatDateFromFile(filename));
+		holder.filename.setText("File: " + filename);
 		
 		return newView;
+	}
+	
+	private String formatDateFromFile(String filename)
+	{
+		int startIndex = filename.indexOf('_')+1;
+		int endIndex = filename.indexOf('_', startIndex);
+		String date = filename.substring(startIndex, endIndex);
+		String year = date.substring(0, 4);
+		String month = date.substring(4, 6);
+		String day = date.substring(6, 8);
+		return year + "-" + month + "-" + day;
 	}
 
 	static class ViewHolder {
 	
 		ImageView icon;
 		TextView date;
+		TextView filename;
 		
 	}
 	
