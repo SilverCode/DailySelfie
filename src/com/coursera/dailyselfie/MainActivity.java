@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.ListActivity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,7 +23,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
+public class MainActivity extends ListActivity {
 	
 	private static final String TAG = "DAILY_SELFIE";
 	private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -31,11 +32,14 @@ public class MainActivity extends Activity {
 	private AlarmManager mAlarmManager;
 	private Intent mNotificationReceiverIntent;
 	private PendingIntent mNotificationReceiverPendingIntent;
+	private SelfieViewAdapter mAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		
+		mAdapter = new SelfieViewAdapter(getApplicationContext());
+		setListAdapter(mAdapter);
 		
 		mAlarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 		
