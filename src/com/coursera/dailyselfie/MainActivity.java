@@ -21,8 +21,11 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class MainActivity extends ListActivity {
 	
@@ -54,6 +57,16 @@ public class MainActivity extends ListActivity {
 				SystemClock.elapsedRealtime() + ALARM_DELAY, 
 				ALARM_DELAY, 
 				mNotificationReceiverPendingIntent);
+		
+		getListView().setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?>adapter, View v, int position, long arg3) {
+				String filename = (String) mAdapter.getItem(position);
+				Intent intent = new Intent(MainActivity.this, ViewSelfieActivity.class);
+				intent.putExtra("filename", filename);
+				startActivity(intent);
+			}
+		});
 	}
 	
 	private void initFileList() {
