@@ -3,6 +3,7 @@ package com.coursera.dailyselfie;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -29,8 +30,6 @@ public class ViewSelfieActivity extends Activity {
 	private void setPic() {
 
 		// Get the dimensions of the View
-		// int targetW = mImageView.getWidth();
-		// int targetH = mImageView.getHeight();
 		DisplayMetrics metrics = getApplicationContext().getResources().getDisplayMetrics();
 		int targetW = metrics.widthPixels;
 		int targetH = metrics.heightPixels;
@@ -49,8 +48,13 @@ public class ViewSelfieActivity extends Activity {
 		bmOptions.inJustDecodeBounds = false;
 		bmOptions.inSampleSize = scaleFactor;
 		bmOptions.inPurgeable = true;
+		
+		Matrix matrix = new Matrix();
+		matrix.postRotate(90);
 
 		Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-		mImageView.setImageBitmap(bitmap);	
+		Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+		mImageView.setImageBitmap(rotated);	
+		bitmap.recycle();
 	}
 }
