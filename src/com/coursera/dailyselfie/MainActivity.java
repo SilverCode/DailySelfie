@@ -1,6 +1,7 @@
 package com.coursera.dailyselfie;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,6 +29,7 @@ public class MainActivity extends ListActivity {
 	private static final String TAG = "DAILY_SELFIE";
 	private static final int REQUEST_IMAGE_CAPTURE = 1;
 	private static final long ALARM_DELAY = 2 * 60 * 1000L; // 2 Minutes
+	private static final String FILE_PREFIX = "SELFIE_";
 	private String mCurrentPhotoPath;
 	private AlarmManager mAlarmManager;
 	private Intent mNotificationReceiverIntent;
@@ -41,6 +43,8 @@ public class MainActivity extends ListActivity {
 		mAdapter = new SelfieViewAdapter(getApplicationContext());
 		setListAdapter(mAdapter);
 		
+		initFileList();
+		
 		mAlarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 		
 		mNotificationReceiverIntent = new Intent(MainActivity.this, AlarmNotificationReceiver.class);
@@ -50,6 +54,15 @@ public class MainActivity extends ListActivity {
 				SystemClock.elapsedRealtime() + ALARM_DELAY, 
 				ALARM_DELAY, 
 				mNotificationReceiverPendingIntent);
+	}
+	
+	private void initFileList() {
+		File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+		File files[] = path.listFiles(new SelfieFileFilter());
+		
+		for (int i = 0; i < files.length; ++i) {
+			mAdapter.add(files[i].getName().toString());
+		}
 	}
 
 	@Override
@@ -102,7 +115,7 @@ public class MainActivity extends ListActivity {
 	
 	private File createImageFile() throws IOException {
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.UK).format(new Date());
-		String imageFileName = "SELFIE_" + timeStamp + ".jpg";
+		String imageFileName = FILE_PREFIX + timeStamp + ".jpg";
 		File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 		
 		if (!storageDir.exists())
@@ -121,5 +134,16 @@ public class MainActivity extends ListActivity {
 		Uri contentUri = Uri.fromFile(f);
 		mediaScanIntent.setData(contentUri);
 		this.sendBroadcast(mediaScanIntent);
+	}
+	
+	public class SelfieFileFilter implements FileFilter {
+		@Override
+		public boolean accept(File pathname) {
+			if (!pathname.isDirectory() && pathname.isFile() && pathname.getName().toString().startsWith(FILE_PREFIX)) {
+				return true;
+			}
+			
+			return false;
+		}
 	}
 }
