@@ -61,7 +61,8 @@ public class MainActivity extends ListActivity {
 		File files[] = path.listFiles(new SelfieFileFilter());
 		
 		for (int i = 0; i < files.length; ++i) {
-			mAdapter.add(files[i].getName().toString());
+			String filename = "file:" + files[i];
+			mAdapter.add(filename);
 		}
 	}
 
@@ -109,6 +110,7 @@ public class MainActivity extends ListActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK)
 		{
+			mAdapter.add(mCurrentPhotoPath);
 			galleryAddPic(mCurrentPhotoPath);
 		}
 	}

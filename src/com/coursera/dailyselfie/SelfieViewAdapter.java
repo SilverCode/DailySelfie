@@ -3,6 +3,8 @@ package com.coursera.dailyselfie;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,13 +55,32 @@ public class SelfieViewAdapter extends BaseAdapter {
 			holder = (ViewHolder) newView.getTag();
 		}
 		
-		//holder.icon.setImageBitmap();
 		String filename = list.get(position);
+		filename = filename.replaceFirst("file:", "");
 		holder.date.setText("Date: " + formatDateFromFile(filename));
-		holder.filename.setText("File: " + filename);
+		holder.filename.setText(filename);
+		
+		int targetW = 64; //holder.icon.getWidth();
+		int targetH = 64; //holder.icon.getHeight();
+		
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		bmOptions.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(filename, bmOptions);
+		int photoW = bmOptions.outWidth;
+		int photoH = bmOptions.outHeight;
+		
+		int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+		
+		bmOptions.inJustDecodeBounds = false;
+		bmOptions.inSampleSize = scaleFactor;
+		bmOptions.inPurgeable = true;
+		
+		Bitmap bitmap = BitmapFactory.decodeFile(filename, bmOptions);
+		holder.icon.setImageBitmap(bitmap);
 		
 		return newView;
 	}
+	
 	
 	private String formatDateFromFile(String filename)
 	{
