@@ -71,11 +71,14 @@ public class MainActivity extends ListActivity {
 	
 	private void initFileList() {
 		File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-		File files[] = path.listFiles(new SelfieFileFilter());
 		
-		for (int i = 0; i < files.length; ++i) {
-			String filename = "file:" + files[i];
-			mAdapter.add(filename);
+		if (path.exists()) {
+			File files[] = path.listFiles(new SelfieFileFilter());
+
+			for (int i = 0; i < files.length; ++i) {
+				String filename = "file:" + files[i];
+				mAdapter.add(filename);
+			}
 		}
 	}
 
